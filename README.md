@@ -26,9 +26,6 @@ FrameType :=
     UTF8DATA = 250,
     BINARYDATA = 249
 
-uuidv4 :=
-    byte[4]-byte[2]-byte[2]-byte[2]-byte[6]
-
 CRYO_MAX_PAYLOAD :=
     16 * 1024 * 1024
 
@@ -39,8 +36,8 @@ ENDPOINT_INFO_FLAGS :=
 - This frame is sent first upon connection to an endpoint
 - It announces the capabilities and cryo version of the sending endpoint
 EndpointInfoFrame := [
-    sid:    uuidv4                  / byte[16],
-    type:   0x00                    / byte[1],
+    sid:    bigint                  / byte[8],
+    type:   0xff                    / byte[1],
     ack:    uint32                  / byte[4],
     ver:    uint32                  / byte[4],
     flags:  ENDPOINT_INFO_FLAGS     / byte[8]
@@ -49,16 +46,16 @@ EndpointInfoFrame := [
 - This frame is sent to announce a disconnect from an endpoint
 - It serves so we do not need to rely on the server-side heartbeat to clean up sessions
 ByeFrame := [
-    sid:    uuidv4  / byte[16],
-    type:   0x00    / byte[1],
+    sid:    bigint  / byte[8],
+    type:   0xfe    / byte[1],
     ack:    uint32  / byte[4]
 ]
 
 - This frame is an explicit acknowledgement to a received frame and serves
 - to signal the sending endpoint, that the message has arrived
 ACKFrame := [
-    sid:    uuidv4  / byte[16],
-    type:   0x00    / byte[1],
+    sid:    bigint  / byte[8],
+    type:   0xfd    / byte[1],
     ack:    uint32  / byte[4],
 ]
 
@@ -66,8 +63,8 @@ ACKFrame := [
 - It is not currently in use, but may be implemented in v2
 - For example when the protocol version between two ENDPOINT_INFO frames deviates
 ErrorFrame := [
-    sid:        uuidv4  / byte[16],
-    type:       0x01    / byte[1],
+    sid:        bigint  / byte[8],
+    type:       0xfc    / byte[1],
     ack:        uint32  / byte[4],
     payload:    string  / byte[n..CRYO_MAX_PAYLOAD]
 ]
@@ -77,24 +74,24 @@ ErrorFrame := [
 - If a PING_PONG with a payload of "ping" is received, you must respond with "pong"
 - and vice-versa
 PingPongFrame := [
-    sid:        uuidv4      / byte[16],
-    type:       0x02        / byte[1],
+    sid:        bigint      / byte[8],
+    type:       0xfb        / byte[1],
     ack:        uint32      / byte[4],
     payload:    ping | pong / byte[4]
 ]
 
 - This frame is a container for arbitrary UTF-8 encoded text data
 Utf8DataFrame := [
-    sid:        uuidv4  / byte[16],
-    type:       0x03    / byte[1],
+    sid:        bigint  / byte[8],
+    type:       0xfa    / byte[1],
     ack:        uint32  / byte[4],
     payload:    string  / byte[n..CRYO_MAX_PAYLOAD]
 ]
 
 - This frame is a container for arbitrary binary data
 BinaryDataFrame := [
-    sid:        uuidv4  / byte[16],
-    type:       0x04    / byte[1],
+    sid:        bigint  / byte[8],
+    type:       0xf9    / byte[1],
     ack:        uint32  / byte[4],
     payload:    binary  / byte[n..CRYO_MAX_PAYLOAD]
 ]
@@ -119,8 +116,8 @@ FLOW_BEHAVIOUR :=
 - in its transaction list with the txid as key
 - Transactions are named - If the name is omitted, it must be filled with "anonymous"
 TXStartFrame = [
-    sid:        uuidv4  / byte[16],
-    type:       0x05    / byte[1],
+    sid:        bigint  / byte[8],
+    type:       0x00    / byte[1],
     ack:        uint32  / byte[4],
     txid:       uint32  / byte[4],
     name:       string  / byte[n..CRYO_MAX_PAYLOAD]
@@ -130,8 +127,8 @@ TXStartFrame = [
 - When received, the receiver must append it to the list in its transaction list
 - keyed by the txid and append the payload to it
 TXChunkFrame = [
-    sid:        uuidv4  / byte[16],
-    type:       0x06    / byte[1],
+    sid:        bigint  / byte[8],
+    type:       0x01    / byte[1],
     txid:       uint32  / byte[4],
     payload:    binary  / byte[n..CRYO_MAX_PAYLOAD]
 ]
@@ -140,8 +137,8 @@ TXChunkFrame = [
 - When received, the receiver must resolve the transaction
 - keyed by the txid and notify consuming code that the transaction has completed
 TXFinishFrame = [
-    sid:        uuidv4  / byte[16],
-    type:       0x07    / byte[1],
+    sid:        bigint  / byte[8],
+    type:       0x02    / byte[1],
     ack:        uint32  / byte[4],
     txid:       uint32  / byte[4]
 ]
@@ -150,8 +147,8 @@ TXFinishFrame = [
 - When unset, defaults to TX_PUSH
 - Cannot change a running transaction, must be sent before a transaction
 TXFlowFrame = [
-    sid:        uuidv4              / byte[16],
-    type:       0x07                / byte[1],
+    sid:        bigint              / byte[8],
+    type:       0x03                / byte[1],
     ack:        uint32              / byte[4],
     behaviour:  FLOW_BEHAVIOUR      / byte[1]
 ]
