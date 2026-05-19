@@ -11,10 +11,10 @@ export function cryoNewId() {
         value = (value << 8n) | BigInt(byte);
     return value;
 }
-export function cryoHasFeatureFlag(flag) {
+export function cryoHasFeatureFlag(flags, flag) {
     if (flag === 0n)
         return false;
-    return (CRYO_PROTOCOL_FEATURES & flag) === flag;
+    return (flags & flag) === flag;
 }
 export class DeserializationError extends Error {
     constructor(pMessage) {

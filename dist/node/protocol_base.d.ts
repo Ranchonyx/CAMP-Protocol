@@ -3,7 +3,7 @@ export declare const CRYO_PROTOCOL_VERSION = 1;
 export declare const CRYO_FEATURE_MASK_TRANSACTION = 1n;
 export declare const CRYO_PROTOCOL_FEATURES: bigint;
 export declare function cryoNewId(): bigint;
-export declare function cryoHasFeatureFlag(flag: bigint): boolean;
+export declare function cryoHasFeatureFlag(flags: bigint, flag: bigint): boolean;
 export declare class DeserializationError extends Error {
     constructor(pMessage: string);
 }
