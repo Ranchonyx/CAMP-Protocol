@@ -1,6 +1,6 @@
-import { TXFlowBehaviour, TXFlowMessage } from "../../../protocol_base.js";
+import { CRYO_FLOW_BEHAVIOUR, TXFlowMessage } from "../../../protocol_base.js";
 export declare class TXFlowFrame {
     static Deserialize(value: Buffer): TXFlowMessage;
-    static Serialize(sid: bigint, ack: number, behaviour: TXFlowBehaviour): Buffer;
+    static Serialize(sid: bigint, ack: number, behaviour: CRYO_FLOW_BEHAVIOUR): Buffer;
 }
 //# sourceMappingURL=TXFlowFrame.d.ts.map

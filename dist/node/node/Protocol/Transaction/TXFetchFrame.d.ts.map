@@ -1,0 +1,1 @@
+{"version":3,"file":"TXFetchFrame.d.ts","sourceRoot":"","sources":["../../../../../src/node/Protocol/Transaction/TXFetchFrame.ts"],"names":[],"mappings":"AAAA,OAAO,EAA0C,cAAc,EAAC,MAAM,2BAA2B,CAAC;AAElG,qBAAa,YAAY;WACP,WAAW,CAAC,KAAK,EAAE,MAAM,GAAG,cAAc;WAmB1C,SAAS,CAAC,GAAG,EAAE,MAAM,EAAE,GAAG,EAAE,MAAM,EAAE,KAAK,EAAE,MAAM,EAAE,GAAG,EAAE,MAAM,GAAG,MAAM;CAWxF"}

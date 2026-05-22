@@ -41,10 +41,11 @@ export var BinaryMessageType;
     BinaryMessageType[BinaryMessageType["TX_CHUNK"] = 1] = "TX_CHUNK";
     BinaryMessageType[BinaryMessageType["TX_FINISH"] = 2] = "TX_FINISH";
     BinaryMessageType[BinaryMessageType["TX_FLOW"] = 3] = "TX_FLOW";
+    BinaryMessageType[BinaryMessageType["TX_FETCH"] = 4] = "TX_FETCH";
 })(BinaryMessageType || (BinaryMessageType = {}));
-export var TXFlowBehaviour;
-(function (TXFlowBehaviour) {
-    TXFlowBehaviour[TXFlowBehaviour["TX_PUSH"] = 0] = "TX_PUSH";
-    TXFlowBehaviour[TXFlowBehaviour["TX_PULL"] = 1] = "TX_PULL";
-})(TXFlowBehaviour || (TXFlowBehaviour = {}));
+export var CRYO_FLOW_BEHAVIOUR;
+(function (CRYO_FLOW_BEHAVIOUR) {
+    CRYO_FLOW_BEHAVIOUR[CRYO_FLOW_BEHAVIOUR["TX_PUSH"] = 0] = "TX_PUSH";
+    CRYO_FLOW_BEHAVIOUR[CRYO_FLOW_BEHAVIOUR["TX_PULL"] = 1] = "TX_PULL";
+})(CRYO_FLOW_BEHAVIOUR || (CRYO_FLOW_BEHAVIOUR = {}));
 //# sourceMappingURL=protocol_base.js.map

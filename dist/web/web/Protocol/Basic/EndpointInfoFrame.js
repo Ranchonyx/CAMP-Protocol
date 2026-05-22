@@ -23,7 +23,7 @@ export class EndpointInfoFrame {
         msg_buf.writeUint8(BinaryMessageType.ENDPOINT_INFO, 8);
         msg_buf.writeUInt32BE(ack, 9);
         msg_buf.writeUInt32BE(CRYO_PROTOCOL_VERSION, 13);
-        msg_buf.writeBigUInt64BE(CRYO_PROTOCOL_FEATURES, 21);
+        msg_buf.writeBigUInt64BE(CRYO_PROTOCOL_FEATURES, 17);
         return msg_buf;
     }
 }

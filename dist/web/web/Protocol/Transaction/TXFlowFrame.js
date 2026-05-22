@@ -1,4 +1,4 @@
-import { BinaryMessageType, DeserializationError, TXFlowBehaviour } from "../../../protocol_base.js";
+import { BinaryMessageType, DeserializationError, CRYO_FLOW_BEHAVIOUR } from "../../../protocol_base.js";
 import { CryoBuffer } from "../../CryoBuffer.js";
 export class TXFlowFrame {
     static Deserialize(value) {
@@ -8,7 +8,7 @@ export class TXFlowFrame {
         if (type !== BinaryMessageType.TX_FLOW)
             throw new DeserializationError("Attempt to deserialize a non-tx_flow message!");
         const behaviour = value.readUint8(10);
-        if (!(behaviour === TXFlowBehaviour.TX_PUSH || behaviour === TXFlowBehaviour.TX_PULL))
+        if (!(behaviour === CRYO_FLOW_BEHAVIOUR.TX_PUSH || behaviour === CRYO_FLOW_BEHAVIOUR.TX_PULL))
             throw new DeserializationError(`Invalid behaviour ${behaviour} in tx_flow message!`);
         return {
             sid,

@@ -41,6 +41,14 @@ export class CryoBuffer {
         this.view.setUint32(offset, value);
     }
 
+    public writeInt32BE(value: number, offset: number): void {
+        this.view.setInt32(offset, value);
+    }
+
+    public readInt32BE(offset: number): number {
+        return this.view.getInt32(offset);
+    }
+
     public writeBigUInt64BE(value: bigint, offset: number): void {
         this.view.setBigUint64(offset, value);
     }

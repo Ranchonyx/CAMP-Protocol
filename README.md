@@ -115,21 +115,25 @@ FLOW_BEHAVIOUR :=
 - When received, the receiver must allocate a list
 - in its transaction list with the txid as key
 - Transactions are named - If the name is omitted, it must be filled with "anonymous"
+- size must be positive (>= 0) for explicit-length transactions, if not explicit, set to -1
 TXStartFrame = [
     sid:        bigint  / byte[8],
     type:       0x00    / byte[1],
     ack:        uint32  / byte[4],
     txid:       uint32  / byte[4],
+    size:       uint32  / byte[4],
     name:       string  / byte[n..CRYO_MAX_PAYLOAD]
 ]
 
 - This frame is a single transaction chunk
 - When received, the receiver must append it to the list in its transaction list
 - keyed by the txid and append the payload to it
+- seq is transmitted to ensure correct delivery order
 TXChunkFrame = [
     sid:        bigint  / byte[8],
     type:       0x01    / byte[1],
     txid:       uint32  / byte[4],
+    seq:        uint32  / byte[4],
     payload:    binary  / byte[n..CRYO_MAX_PAYLOAD]
 ]
 
@@ -151,5 +155,17 @@ TXFlowFrame = [
     type:       0x03                / byte[1],
     ack:        uint32              / byte[4],
     behaviour:  FLOW_BEHAVIOUR      / byte[1]
+]
+
+- In use only when session flow control is set to TX_PULL
+- Describes a range request from chunks #start - #end
+- The server will transmit those chunks and then wait for another TXFetchFrame
+- If end is >= than the amount of chunks on the server, the rest of the transaction will be transmitted
+TXFetchFrame = [
+    sid:        bigint              / byte[8],
+    type:       0x04                / byte[1],
+    ack:        uint32              / byte[4],
+    start:      uint32              / byte[4],
+    end:        uint32              / byte[4]
 ]
 ```

@@ -52,63 +52,71 @@ export enum BinaryMessageType {
     TX_START = 0x00,
     TX_CHUNK = 0x01,
     TX_FINISH = 0x02,
-    TX_FLOW = 0x03
+    TX_FLOW = 0x03,
+    TX_FETCH = 0x04
 }
 
-export enum TXFlowBehaviour {
+export enum CRYO_FLOW_BEHAVIOUR {
     TX_PUSH = 0x00,
     TX_PULL = 0x01
 }
 
 export type BufferEncoding = "utf8" | "hex";
 
-export type BinaryMessage<T, U extends BinaryMessageType> = {
+export type CryoMessage<T, U extends BinaryMessageType> = {
     sid: bigint;
     type: U;
 } & T;
 
-export type EndpointInfoMessage = BinaryMessage<{
+export type EndpointInfoMessage = CryoMessage<{
     ack: number;
     version: number;
     features: bigint;
 }, BinaryMessageType.ENDPOINT_INFO>;
 
-export type ByeMessage = BinaryMessage<{
+export type ByeMessage = CryoMessage<{
     ack: number;
     reason: string;
 }, BinaryMessageType.BYE>;
 
-export type AckMessage = BinaryMessage<{
+export type AckMessage = CryoMessage<{
     ack: number;
 }, BinaryMessageType.ACK>;
 
-export type PingMessage = BinaryMessage<{
+export type PingMessage = CryoMessage<{
     ack: number;
     payload: "ping" | "pong";
 }, BinaryMessageType.PING_PONG>;
 
-export type UTF8DataMessage = BinaryMessage<{
+export type UTF8DataMessage = CryoMessage<{
     ack: number;
     payload: string;
 }, BinaryMessageType.UTF8DATA>;
 
-export type TXStartMessage = BinaryMessage<{
+export type TXStartMessage = CryoMessage<{
     ack: number;
     txId: number;
     txName: string;
+    byteLength: number | null;
 }, BinaryMessageType.TX_START>;
 
-export type TXFinishMessage = BinaryMessage<{
+export type TXFinishMessage = CryoMessage<{
     ack: number;
     txId: number;
 }, BinaryMessageType.TX_FINISH>;
 
-export type TXFlowMessage = BinaryMessage<{
+export type TXFlowMessage = CryoMessage<{
     ack: number;
-    behaviour: TXFlowBehaviour
+    behaviour: CRYO_FLOW_BEHAVIOUR
 }, BinaryMessageType.TX_FLOW>;
 
-export type ErrorMessage = BinaryMessage<{
+export type TXFetchMessage = CryoMessage<{
+    ack: number;
+    start: number;
+    end: number;
+}, BinaryMessageType.TX_FETCH>;
+
+export type ErrorMessage = CryoMessage<{
     ack: number;
     payload: string;
 }, BinaryMessageType.ERROR>;

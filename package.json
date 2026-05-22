@@ -18,6 +18,12 @@
   "types": "./dist/node/index.node.d.ts",
   "version": "1.1.7",
   "devDependencies": {
-    "@types/node": "^25.6.2"
+    "@types/chai": "^5.2.3",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^25.9.0",
+    "chai": "^6.2.2"
+  },
+  "dependencies": {
+    "mocha": "^7.2.0"
   }
 }

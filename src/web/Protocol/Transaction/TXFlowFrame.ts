@@ -1,4 +1,4 @@
-import {BinaryMessageType, DeserializationError, TXFlowBehaviour, TXFlowMessage} from "../../../protocol_base.js";
+import {BinaryMessageType, DeserializationError, CRYO_FLOW_BEHAVIOUR, TXFlowMessage} from "../../../protocol_base.js";
 
 import {CryoBuffer} from "../../CryoBuffer.js";
 
@@ -11,8 +11,8 @@ export class TXFlowFrame {
         if (type !== BinaryMessageType.TX_FLOW)
             throw new DeserializationError("Attempt to deserialize a non-tx_flow message!");
 
-        const behaviour = value.readUint8(10) as TXFlowBehaviour;
-        if (!(behaviour === TXFlowBehaviour.TX_PUSH || behaviour === TXFlowBehaviour.TX_PULL))
+        const behaviour = value.readUint8(13) as CRYO_FLOW_BEHAVIOUR;
+        if (!(behaviour === CRYO_FLOW_BEHAVIOUR.TX_PUSH || behaviour === CRYO_FLOW_BEHAVIOUR.TX_PULL))
             throw new DeserializationError(`Invalid behaviour ${behaviour} in tx_flow message!`);
 
         return {
@@ -23,13 +23,13 @@ export class TXFlowFrame {
         }
     }
 
-    public static Serialize(sid: bigint, ack: number, behaviour: TXFlowBehaviour): CryoBuffer {
+    public static Serialize(sid: bigint, ack: number, behaviour: CRYO_FLOW_BEHAVIOUR): CryoBuffer {
         const msg_buf = CryoBuffer.alloc(8 + 4 + 1 + 1);
 
         msg_buf.writeBigUInt64BE(sid, 0);
         msg_buf.writeUint8(BinaryMessageType.TX_FLOW, 8);
         msg_buf.writeUInt32BE(ack, 9);
-        msg_buf.writeUint8(behaviour, 10);
+        msg_buf.writeUint8(behaviour, 13);
 
         return msg_buf;
     }
