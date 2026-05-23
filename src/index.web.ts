@@ -19,9 +19,9 @@ export {
     CRYO_PROTOCOL_VERSION,
     CRYO_FEATURE_MASK_TRANSACTION,
     CRYO_PROTOCOL_FEATURES,
-    CRYO_FLOW_BEHAVIOUR
+    CRYO_FLOW_BEHAVIOUR,
 } from "./protocol_base.js"
-
+export {CryoBuffer} from "./web/CryoBuffer.js"
 export {EndpointInfoFrame} from "./web/Protocol/Basic/EndpointInfoFrame.js"
 export {ByeFrame} from "./web/Protocol/Basic/ByeFrame.js"
 export {Utf8DataFrame} from "./web/Protocol/Basic/Utf8DataFrame.js"

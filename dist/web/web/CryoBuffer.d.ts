@@ -5,7 +5,10 @@ export declare class CryoBuffer {
     static alloc(length: number): CryoBuffer;
     static from(input: string, encoding?: "utf8" | "hex"): CryoBuffer;
     static concat(buffers: CryoBuffer[]): CryoBuffer;
+    fill(value: number): this;
     writeUInt32BE(value: number, offset: number): void;
+    writeInt32BE(value: number, offset: number): void;
+    readInt32BE(offset: number): number;
     writeBigUInt64BE(value: bigint, offset: number): void;
     writeUint8(value: number, offset: number): void;
     readUInt32BE(offset: number): number;

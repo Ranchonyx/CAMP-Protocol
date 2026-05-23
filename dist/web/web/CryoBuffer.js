@@ -28,8 +28,19 @@ export class CryoBuffer {
         }
         return new CryoBuffer(result);
     }
+    fill(value) {
+        for (let b = 0; b < this.view.byteLength; b++)
+            this.view.setUint8(b, value);
+        return this;
+    }
     writeUInt32BE(value, offset) {
         this.view.setUint32(offset, value);
+    }
+    writeInt32BE(value, offset) {
+        this.view.setInt32(offset, value);
+    }
+    readInt32BE(offset) {
+        return this.view.getInt32(offset);
     }
     writeBigUInt64BE(value, offset) {
         this.view.setBigUint64(offset, value);

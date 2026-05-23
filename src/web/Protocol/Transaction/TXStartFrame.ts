@@ -25,7 +25,7 @@ export class TXStartFrame {
     }
 
     public static Serialize(sid: bigint, ack: number, txId: number, name: string = "anonymous", byteLength: number = -1): CryoBuffer {
-        const msg_buf = CryoBuffer.alloc(8 + 4 + 1 + 4 + CryoBuffer.from(name, "utf8").byteLength);
+        const msg_buf = CryoBuffer.alloc(8 + 1 + 4 + 4 + 4 + CryoBuffer.from(name, "utf8").byteLength);
 
         msg_buf.writeBigUInt64BE(sid, 0);
         msg_buf.writeUint8(BinaryMessageType.TX_START, 8);

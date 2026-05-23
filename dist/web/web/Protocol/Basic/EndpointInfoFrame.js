@@ -6,7 +6,7 @@ export class EndpointInfoFrame {
         const type = value.readUint8(8);
         const ack = value.readUInt32BE(9);
         const version = value.readUInt32BE(13);
-        const features = value.readBigUInt64BE(21);
+        const features = value.readBigUInt64BE(17);
         if (type !== BinaryMessageType.ENDPOINT_INFO)
             throw new DeserializationError("Attempt to deserialize a non-endpoint_info message!");
         return {

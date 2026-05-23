@@ -36,6 +36,12 @@ export class CryoBuffer {
         return new CryoBuffer(result);
     }
 
+    public fill(value: number) {
+        for(let b = 0; b < this.view.byteLength; b++)
+            this.view.setUint8(b, value);
+
+        return this;
+    }
 
     public writeUInt32BE(value: number, offset: number): void {
         this.view.setUint32(offset, value);
