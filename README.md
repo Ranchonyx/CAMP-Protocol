@@ -40,26 +40,29 @@ The protocol should remain easy to inspect, easy to implement, and easy to adapt
 
 # Transport
 
-Cryo utilizes the `Websocket` protocol as its transport which directly implies ordered delivery of messages as
-`Websocket` is built upon `TCP`.
+Cryo uses the `WebSocket` protocol as its transport layer, which directly implies ordered delivery of messages as
+`WebSocket` is built upon `TCP`.
 
 As such, there is no dependency on application-level sequence numbers to detect potentially lost or partial
 transmissions.
 
 # Authentication
 
-During the **HTTP-Upgrade**, the receiving Cryo-Server looks for a query parameter `authorization`.
+During the **HTTP-Upgrade**, the receiving Cryo server looks for a query parameter `authorization`.
 
 Authorization in this scenario is a bearer token in the shape of `Bearer <some auth token>`.
 
-The Cryo server then executes a user-defined function with the value of the `authorization` header.
+The Cryo server then executes a user-defined function with the value of the `authorization` query parameter.
 If it returns `true`, the **HTTP-Upgrade** request is completed and the session is authenticated, if it returns `false`,
 an **HTTP 401** status is returned.
 
 # Identification
 
 During the **HTTP-Upgrade**, the receiving Cryo-Server looks for a query parameter `x-cryo-sid`.
-A Cryo session is identified by a **client-chosen SID** in an 8-byte **bigint** format which is carried by each frame.
+A Cryo session is identified by a **client-chosen SID** in an 8-byte **int64 ** format which is carried by each frame.
+
+This **SID** is chosen randomly by the client. If a connection attempt is made, and the server already has a running
+session with this **SID**, the new connection is rejected.
 
 To coherently identify a Cryo session, either the bearer token in the `authorization` query parameter shall be used, or
 a custom process must be implemented.
@@ -87,7 +90,7 @@ sequenceDiagram
 
 # Frame encoding
 
-The entire Cryo protocol is uses a binary encoding. It can carry plaintext, but it is not a plaintext-only protocol.
+The entire Cryo protocol uses binary encoding. It can carry plaintext, but it is not a plaintext-only protocol.
 
 **All** numeric values in Cryo are encoded using the `Big-Endian` format order.
 
@@ -122,33 +125,44 @@ ENDPOINT_INFO_FLAGS :=
 - Sent immediately after connection establishment
 - Announces protocol version and endpoint capabilities
 EndpointInfoFrame := [
-    sid:    bigint                  / byte[8],
+    sid:    int64                   / byte[8],
     type:   0xff                    / byte[1],
     ack:    uint32                  / byte[4],
     ver:    uint32                  / byte[4],
     flags:  ENDPOINT_INFO_FLAGS     / byte[8]
 ]
 
-- Explicit frame acknowledgement
-- Confirms successful delivery
+- Gracefully terminates a Cryo session
+- May be acknowledged using ACKFrame
 ByeFrame := [
-    sid:    bigint  / byte[8],
+    sid:    int64   / byte[8],
     type:   0xfe    / byte[1],
     ack:    uint32  / byte[4]
 ]
 
-- Explicit frame acknowledgement
-- Confirms successful delivery
+ACKs in Cryo are application-level receipt confirmations.
+
+When a non-TX_CHUNK frame is sent, the sender assigns an incrementing ACK identifier and tracks it until an ACKFrame
+is received from the remote endpoint.
+
+ACKs are intentionally separate from transport-level reliability provided by TCP/WebSocket.
+An ACKFrame simply confirms that a frame was received and accepted by the remote Cryo endpoint.
+
+TX_CHUNK frames are excluded from explicit acknowledgements for performance reasons.
+Transactions are instead acknowledged as a whole through TX_FINISH and higher-level application behavior.
+
+- Application-level acknowledgement frame
+- Confirms receipt of a previously tracked frame
 ACKFrame := [
-    sid:    bigint  / byte[8],
+    sid:    int64   / byte[8],
     type:   0xfd    / byte[1],
-    ack:    uint32  / byte[4],
+    ack:    uint32  / byte[4]
 ]
 
 - Protocol-level error frame
 - Reserved for custom error handling
 ErrorFrame := [
-    sid:        bigint  / byte[8],
+    sid:        int64   / byte[8],
     type:       0xfc    / byte[1],
     ack:        uint32  / byte[4],
     payload:    string  / byte[n..CRYO_MAX_PAYLOAD]
@@ -157,7 +171,7 @@ ErrorFrame := [
 - Heartbeat keepalive frame
 - "ping" must be answered with "pong" and vice-versa
 PingPongFrame := [
-    sid:        bigint      / byte[8],
+    sid:        int64       / byte[8],
     type:       0xfb        / byte[1],
     ack:        uint32      / byte[4],
     payload:    ping | pong / byte[4]
@@ -165,7 +179,7 @@ PingPongFrame := [
 
 - Carries arbitrary UTF-8 text data
 Utf8DataFrame := [
-    sid:        bigint  / byte[8],
+    sid:        int64   / byte[8],
     type:       0xfa    / byte[1],
     ack:        uint32  / byte[4],
     payload:    string  / byte[n..CRYO_MAX_PAYLOAD]
@@ -173,7 +187,7 @@ Utf8DataFrame := [
 
 - Carries arbitrary binary data
 BinaryDataFrame := [
-    sid:        bigint  / byte[8],
+    sid:        int64   / byte[8],
     type:       0xf9    / byte[1],
     ack:        uint32  / byte[4],
     payload:    binary  / byte[n..CRYO_MAX_PAYLOAD]
@@ -194,25 +208,33 @@ FLOW_BEHAVIOUR :=
     TX_PUSH = 0x00,
     TX_PULL = 0x01
 
+Transaction flow controls how explicit-length transactions are delivered.
+
+By default, transactions use TX_PUSH. In TX_PUSH mode, the sender may transmit chunks continuously after TX_START.
+
+TX_PULL exists for receivers that want application-level backpressure.
+In TX_PULL mode, chunks are only sent after the receiver explicitly requests a range using TX_FETCH.
+This allows receivers to pace large transfers, limit buffering, process data incrementally, and avoid accepting chunks faster than they can consume them.
+
 - Starts a transaction
 - Receiver allocates transaction state using txid
 - Empty names must default to "anonymous"
 - size >= 0 for explicit-length transactions
 - size = -1 for streaming/unknown-length transactions
 TXStartFrame = [
-    sid:        bigint  / byte[8],
+    sid:        int64   / byte[8],
     type:       0x00    / byte[1],
     ack:        uint32  / byte[4],
     txid:       uint32  / byte[4],
-    size:       sint32  / byte[4],
+    size:       int32   / byte[4],
     name:       string  / byte[n..CRYO_MAX_PAYLOAD]
 ]
 
 - Transaction payload chunk
 - Receiver appends payload to transaction buffer
-- seq ensures ordered reconstruction
+- seq identifies the chunk position within the transaction
 TXChunkFrame = [
-    sid:        bigint  / byte[8],
+    sid:        int64   / byte[8],
     type:       0x01    / byte[1],
     txid:       uint32  / byte[4],
     seq:        uint32  / byte[4],
@@ -222,7 +244,7 @@ TXChunkFrame = [
 - Marks transaction completion
 - Receiver resolves and finalizes transaction
 TXFinishFrame = [
-    sid:        bigint  / byte[8],
+    sid:        int64   / byte[8],
     type:       0x02    / byte[1],
     ack:        uint32  / byte[4],
     txid:       uint32  / byte[4]
@@ -233,7 +255,7 @@ TXFinishFrame = [
 - Must be sent before transaction start
 - Only meaningful for explicit-length transactions
 TXFlowFrame = [
-    sid:        bigint              / byte[8],
+    sid:        int64               / byte[8],
     type:       0x03                / byte[1],
     ack:        uint32              / byte[4],
     behaviour:  FLOW_BEHAVIOUR      / byte[1]
@@ -244,7 +266,7 @@ TXFlowFrame = [
 - end beyond available chunk count transmits remaining chunks
 - Only meaningful for explicit-length transactions
 TXFetchFrame = [
-    sid:        bigint              / byte[8],
+    sid:        int64               / byte[8],
     type:       0x04                / byte[1],
     ack:        uint32              / byte[4],
     start:      uint32              / byte[4],
@@ -268,11 +290,11 @@ It is recommended to only use Cryo in secure contexts (TLS, HTTPS, WSS).
 
 # Versioning
 
-Cryo versions change upon the release of the according NPM
+Cryo versions correspond to releases of the NPM
 package [cryo-protocol](https://www.npmjs.com/package/cryo-protocol "cryo-protocol on NPM").
 
 # Implementations
 
 - [Cryo-Server in TypeScript under Node.Js](https://github.com/Ranchonyx/Cryo-Server)
 - [Cryo client library in TypeScript under modern browsers](https://github.com/Ranchonyx/Cryo-Client-Browser)
-- [Cryoc lient library in TypeScript under Node.Js](https://github.com/Ranchonyx/Cryo-Client-Node)
+- [Cryo client library in TypeScript under Node.Js](https://github.com/Ranchonyx/Cryo-Client-Node)
