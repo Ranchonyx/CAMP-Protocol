@@ -269,6 +269,7 @@ TXFetchFrame = [
     sid:        int64               / byte[8],
     type:       0x04                / byte[1],
     ack:        uint32              / byte[4],
+    txId:       uint32              / byte[4],
     start:      uint32              / byte[4],
     end:        uint32              / byte[4]
 ]

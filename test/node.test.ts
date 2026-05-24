@@ -164,10 +164,11 @@ describe("Namespace Cryo.Transaction Serialization", function () {
     });
 
     it("serializes tx_fetch", () => {
-        expect(() => Cryo_Transaction.FRAME_TX_FETCH = impl.TXFetchFrame.Serialize(sid, 0, 12, 24)).to.not.throw();
+        expect(() => Cryo_Transaction.FRAME_TX_FETCH = impl.TXFetchFrame.Serialize(sid, 0, 0xff, 12, 24)).to.not.throw();
         Cryo_Transaction.MSG_TX_FETCH = {
             ack: 0,
             sid: sid,
+            txId: 0xff,
             type: BinaryMessageType.TX_FETCH,
             start: 12,
             end: 24

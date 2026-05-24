@@ -112,6 +112,7 @@ export type TXFlowMessage = CryoMessage<{
 
 export type TXFetchMessage = CryoMessage<{
     ack: number;
+    txId: number;
     start: number;
     end: number;
 }, BinaryMessageType.TX_FETCH>;
