@@ -9,10 +9,18 @@
   },
   "exports": {
     ".": {
-      "types": "./dist/node/index.node.d.ts",
-      "browser": "./dist/web/index.web.js",
-      "node": "./dist/node/index.node.js",
-      "default": "./dist/node/index.node.js"
+      "browser": {
+        "types": "./dist/web/index.web.d.ts",
+        "default": "./dist/web/index.web.js"
+      },
+      "node": {
+        "types": "./dist/node/index.node.d.ts",
+        "default": "./dist/node/index.node.js"
+      },
+      "default": {
+        "types": "./dist/node/index.node.d.ts",
+        "default": "./dist/node/index.node.js"
+      }
     }
   },
   "types": "./dist/node/index.node.d.ts",

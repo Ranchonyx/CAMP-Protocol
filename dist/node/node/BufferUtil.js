@@ -1,9 +1,8 @@
-import { BinaryMessageType } from "../protocol_base.js";
 export class BufferUtil {
     static GetType(message) {
         const type = message.readUint8(16);
-        if (type > BinaryMessageType.TX_FINISH)
-            throw new Error(`Unable to decode type from message ${message}. MAX_TYPE = 7, got ${type} !`);
+        if (type > 0xff)
+            throw new Error(`Unable to decode type from message ${message}. MAX_TYPE = 255, got ${type} !`);
         return type;
     }
     static GetAck(message) {
