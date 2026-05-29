@@ -1,5 +1,5 @@
 export type { BinaryDataMessage, TXChunkMessage } from "./web/protocol.js";
-export type { PingMessage, ErrorMessage, UTF8DataMessage, AckMessage, TXStartMessage, TXFetchMessage, TXFlowMessage, TXFinishMessage, CryoMessage, EndpointInfoMessage, ByeMessage } from "./protocol_base.js";
+export type { PingMessage, ErrorMessage, UTF8DataMessage, AckMessage, TXStartMessage, TXFetchMessage, TXFlowMessage, TXFinishMessage, CryoMessage, EndpointInfoMessage, ByeMessage, TXCancelMessage } from "./protocol_base.js";
 export { BinaryMessageType, cryoNewId, cryoHasFeatureFlag, CRYO_PROTOCOL_VERSION, CRYO_FEATURE_MASK_TRANSACTION, CRYO_PROTOCOL_FEATURES, CRYO_FLOW_BEHAVIOUR, } from "./protocol_base.js";
 export { CryoBuffer } from "./web/CryoBuffer.js";
 export { EndpointInfoFrame } from "./web/Protocol/Basic/EndpointInfoFrame.js";
@@ -15,4 +15,5 @@ export { TXFinishFrame } from "./web/Protocol/Transaction/TXFinishFrame.js";
 export { TXFlowFrame } from "./web/Protocol/Transaction/TXFlowFrame.js";
 export { TXFetchFrame } from "./web/Protocol/Transaction/TXFetchFrame.js";
 export { BufferUtil } from "./web/BufferUtil.js";
+export { TXCancelFrame } from "./web/Protocol/Transaction/TXCancelFrame.js";
 //# sourceMappingURL=index.web.d.ts.map

@@ -22,7 +22,8 @@ export declare enum BinaryMessageType {
     TX_CHUNK = 1,
     TX_FINISH = 2,
     TX_FLOW = 3,
-    TX_FETCH = 4
+    TX_FETCH = 4,
+    TX_CANCEL = 5
 }
 export declare enum CRYO_FLOW_BEHAVIOUR {
     TX_PUSH = 0,
@@ -73,6 +74,10 @@ export type TXFetchMessage = CryoMessage<{
     start: number;
     end: number;
 }, BinaryMessageType.TX_FETCH>;
+export type TXCancelMessage = CryoMessage<{
+    ack: number;
+    txId: number;
+}, BinaryMessageType.TX_CANCEL>;
 export type ErrorMessage = CryoMessage<{
     ack: number;
     payload: string;

@@ -8,9 +8,15 @@ export declare class BufferUtil {
     static Transaction: {
         new (): {};
         GetChunkTxId(message: CryoBuffer): number;
+        GetChunkSeq(message: CryoBuffer): number;
         GetChunkPayload(message: CryoBuffer, encoding: BufferEncoding): string;
         GetTxId(message: CryoBuffer): number;
+        GetTxSize(message: CryoBuffer): number;
         GetTxName(message: CryoBuffer, encoding?: "utf8" | "hex"): string;
+        GetFlowBehaviour(message: CryoBuffer): number;
+        GetFetchTxId(message: CryoBuffer): number;
+        GetFetchStart(message: CryoBuffer): number;
+        GetFetchEnd(message: CryoBuffer): number;
     };
 }
 //# sourceMappingURL=BufferUtil.d.ts.map

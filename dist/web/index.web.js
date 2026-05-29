@@ -13,4 +13,5 @@ export { TXFinishFrame } from "./web/Protocol/Transaction/TXFinishFrame.js";
 export { TXFlowFrame } from "./web/Protocol/Transaction/TXFlowFrame.js";
 export { TXFetchFrame } from "./web/Protocol/Transaction/TXFetchFrame.js";
 export { BufferUtil } from "./web/BufferUtil.js";
+export { TXCancelFrame } from "./web/Protocol/Transaction/TXCancelFrame.js";
 //# sourceMappingURL=index.web.js.map

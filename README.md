@@ -202,7 +202,8 @@ FrameType :=
     TX_CHUNK = 0x01,
     TX_FINISH = 0x02,
     TX_FLOW = 0x03,
-    TX_FETCH = 0x04
+    TX_FETCH = 0x04,
+    TX_CANEL = 0x05
 
 FLOW_BEHAVIOUR :=
     TX_PUSH = 0x00,
@@ -272,6 +273,15 @@ TXFetchFrame = [
     txId:       uint32              / byte[4],
     start:      uint32              / byte[4],
     end:        uint32              / byte[4]
+]
+
+- Used to cancel a running transaction
+- Signals the sender to stop sending data and remove the transaction from its store
+TXCancelFrame = [
+    sid:        int64               / byte[8],
+    type:       0x05                / byte[1],
+    ack:        uint32              / byte[4],
+    txId:       uint32              / byte[4]
 ]
 ```
 

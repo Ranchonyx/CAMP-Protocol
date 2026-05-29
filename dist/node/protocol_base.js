@@ -42,6 +42,7 @@ export var BinaryMessageType;
     BinaryMessageType[BinaryMessageType["TX_FINISH"] = 2] = "TX_FINISH";
     BinaryMessageType[BinaryMessageType["TX_FLOW"] = 3] = "TX_FLOW";
     BinaryMessageType[BinaryMessageType["TX_FETCH"] = 4] = "TX_FETCH";
+    BinaryMessageType[BinaryMessageType["TX_CANCEL"] = 5] = "TX_CANCEL";
 })(BinaryMessageType || (BinaryMessageType = {}));
 export var CRYO_FLOW_BEHAVIOUR;
 (function (CRYO_FLOW_BEHAVIOUR) {

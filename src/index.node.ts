@@ -10,7 +10,8 @@ export type {
     TXStartMessage,
     TXFinishMessage,
     TXFetchMessage,
-    TXFlowMessage
+    TXFlowMessage,
+    TXCancelMessage
 } from "./protocol_base.js"
 export {
     BinaryMessageType,
@@ -35,3 +36,4 @@ export {TXFinishFrame} from "./node/Protocol/Transaction/TXFinishFrame.js"
 export {TXFlowFrame} from "./node/Protocol/Transaction/TXFlowFrame.js"
 export {TXFetchFrame} from "./node/Protocol/Transaction/TXFetchFrame.js"
 export {BufferUtil} from "./node/BufferUtil.js"
+export {TXCancelFrame} from "./node/Protocol/Transaction/TXCancelFrame.js"

@@ -21,6 +21,7 @@ import {
     TXFinishFrame,
     TXFlowFrame,
     TXFetchFrame,
+    TXCancelFrame,
     CryoBuffer
 } from "../dist/web/index.web.js";
 
@@ -163,7 +164,17 @@ describe("Namespace Cryo.Transaction Serialization", function () {
             start: 12,
             end: 24
         };
-    })
+    });
+
+    it("Serializes tx_cancel", () => {
+        expect(() => Cryo_Transaction.FRAME_TX_CANCEL = impl.TXCancelFrame.Serialize(sid, 0, 0xff)).to.not.throw();
+        Cryo_Transaction.MSG_TX_CANCEL = {
+            ack: 0,
+            sid: sid,
+            txId: 0xff,
+            type: BinaryMessageType.TX_CANCEL
+        };
+    });
 });
 
 describe("Namespace: Cryo.Base Deserialization", function () {
@@ -194,4 +205,5 @@ describe("Namespace: Cryo.Transaction Deserialization", function () {
     it("deserializes tx_finish", () => expect(TXFinishFrame.Deserialize(Cryo_Transaction.FRAME_TX_FINISH)).to.deep.equal(Cryo_Transaction.MSG_TX_FINISH));
     it("deserializes tx_flow", () => expect(TXFlowFrame.Deserialize(Cryo_Transaction.FRAME_TX_FLOW)).to.deep.equal(Cryo_Transaction.MSG_TX_FLOW));
     it("deserializes tx_fetch", () => expect(TXFetchFrame.Deserialize(Cryo_Transaction.FRAME_TX_FETCH)).to.deep.equal(Cryo_Transaction.MSG_TX_FETCH));
+    it("deserializes tx_cancel", () => expect(TXCancelFrame.Deserialize(Cryo_Transaction.FRAME_TX_CANCEL)).to.deep.equal(Cryo_Transaction.MSG_TX_CANCEL));
 });
