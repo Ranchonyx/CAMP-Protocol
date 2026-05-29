@@ -195,6 +195,42 @@ BinaryDataFrame := [
 ```
 
 ### Cryo.Transaction
+### Transaction lifecycle
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Server
+    Server ->> Client: TX_START(name=test, txId=0, size=256k)
+    Note over Server, Client: Server sends metadata about the transaction to client
+    Client ->> Client: Create txId-identified sink for incoming chunks
+    Client ->> Server: ACK
+
+    alt FlowControl = TX_PUSH
+        Note over Server, Client: Server pushes chunks
+        Server ->> Client: TX_CHUNK(txId=0, seq = 0, size=64k)
+        Server ->> Client: TX_CHUNK(txId=0, seq = 1, size=64k)
+        Server ->> Client: TX_CHUNK(txId=0, seq = 2, size=64k)
+        Server ->> Client: TX_CHUNK(txId=0, seq = 3, size=64k)
+        Server ->> Client: TX_FINISH(txId=0)
+        Client ->> Server: ACK
+    else FlowControl = TX_PULL
+        Note over Server, Client: Client pulls chunks
+        Client ->> Server: TX_FETCH(txId = 0, chunks 0-2)
+        Server ->> Client: ACK
+        Server ->> Client: TX_CHUNK(txId=0, seq = 0, size=64k)
+        Server ->> Client: TX_CHUNK(txId=0, seq = 1, size=64k)
+        Client ->> Server: TX_FETCH(txId = 0, chunks 2-3)
+        Server ->> Client: ACK
+        Server ->> Client: TX_CHUNK(txId=0, seq = 2 size=64k)
+        Server ->> Client: TX_CHUNK(txId=0, seq = 3, size=64k)
+        Note over Server, Client: Server automatically finishes once all chunks are read
+        Server ->> Client: TX_FINISH(txId = 0)
+        Client ->> Server: ACK
+    end
+
+    Note over Client: Client finishes work
+    Client ->> Server: BYE
+```
 
 ```
 FrameType :=
@@ -203,7 +239,7 @@ FrameType :=
     TX_FINISH = 0x02,
     TX_FLOW = 0x03,
     TX_FETCH = 0x04,
-    TX_CANEL = 0x05
+    TX_CANCEL = 0x05
 
 FLOW_BEHAVIOUR :=
     TX_PUSH = 0x00,
