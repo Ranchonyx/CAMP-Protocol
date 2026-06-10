@@ -4,11 +4,11 @@ config.truncateThreshold = 0;
 import {Buffer} from "node:buffer"
 import * as impl from "../dist/node/index.node.js"
 import {
-    CRYO_PROTOCOL_FEATURES,
-    CRYO_PROTOCOL_VERSION,
+    CAMP_PROTOCOL_FEATURES,
+    CAMP_PROTOCOL_VERSION,
     EndpointInfoFrame,
-    BinaryMessageType,
-    CRYO_FLOW_BEHAVIOUR
+    CAMPFrameType,
+    CAMP_FLOW_BEHAVIOUR
 } from "../dist/node/index.node.js"
 
 import type {
@@ -21,9 +21,9 @@ import type {
     BinaryDataMessage,
     TXChunkMessage,
     TXFinishMessage,
-    TXFlowMessage,
     TXFetchMessage,
-    TXStartMessage
+    TXStartMessage,
+    TXCancelMessage
 } from "../dist/node/index.node.js"
 
 import {
@@ -36,34 +36,32 @@ import {
     TXStartFrame,
     TXChunkFrame,
     TXFinishFrame,
-    TXFlowFrame,
-    TXFetchFrame
+    TXFetchFrame,
+    TXCancelFrame
 } from "../dist/node/index.node.js";
-import {TXCancelMessage} from "../src/protocol_base";
-import {TXCancelFrame} from "../src/node/Protocol/Transaction/TXCancelFrame";
 
 const sid: bigint = 1n;
 const txId: number = 0;
 
-const Cryo_Base: Record<string, Buffer | object> = {};
+const CAMP_BASE: Record<string, Buffer | object> = {};
 
-describe("Namespace: Cryo.Base Serialization", function () {
+describe("Namespace: CAMP.Base Serialization", function () {
 
     it("serializes endpoint_info", () => {
-        expect(() => Cryo_Base.FRAME_ENDPOINT_INFO = impl.EndpointInfoFrame.Serialize(sid, 0)).to.not.throw();
-        Cryo_Base.MSG_ENDPOINT_INFO = {
+        expect(() => CAMP_BASE.FRAME_ENDPOINT_INFO = impl.EndpointInfoFrame.Serialize(sid, 0)).to.not.throw();
+        CAMP_BASE.MSG_ENDPOINT_INFO = {
             ack: 0,
             sid: sid,
-            features: CRYO_PROTOCOL_FEATURES,
-            type: BinaryMessageType.ENDPOINT_INFO,
-            version: CRYO_PROTOCOL_VERSION
+            features: CAMP_PROTOCOL_FEATURES,
+            type: CAMPFrameType.ENDPOINT_INFO,
+            version: CAMP_PROTOCOL_VERSION
         } as EndpointInfoMessage;
     });
 
     it("serializes bye", () => {
-        expect(() => Cryo_Base.FRAME_BYE = impl.ByeFrame.Serialize(sid, 0, "client navigated away")).to.not.throw();
-        Cryo_Base.MSG_BYE = {
-            type: BinaryMessageType.BYE,
+        expect(() => CAMP_BASE.FRAME_BYE = impl.ByeFrame.Serialize(sid, 0, "client navigated away")).to.not.throw();
+        CAMP_BASE.MSG_BYE = {
+            type: CAMPFrameType.BYE,
             sid: sid,
             ack: 0,
             reason: "client navigated away"
@@ -71,138 +69,127 @@ describe("Namespace: Cryo.Base Serialization", function () {
     });
 
     it("serializes ack", () => {
-        expect(() => Cryo_Base.FRAME_ACK = impl.ACKFrame.Serialize(sid, 0)).to.not.throw();
-        Cryo_Base.MSG_ACK = {
+        expect(() => CAMP_BASE.FRAME_ACK = impl.ACKFrame.Serialize(sid, 0)).to.not.throw();
+        CAMP_BASE.MSG_ACK = {
             ack: 0,
             sid: sid,
-            type: BinaryMessageType.ACK
+            type: CAMPFrameType.ACK
         } as AckMessage;
     });
 
     it("serializes error", () => {
-        expect(() => Cryo_Base.FRAME_ERROR = impl.ErrorFrame.Serialize(sid, 0, "client error occured, details: ...")).to.not.throw();
-        Cryo_Base.MSG_ERROR = {
+        expect(() => CAMP_BASE.FRAME_ERROR = impl.ErrorFrame.Serialize(sid, 0, "client error occured, details: ...")).to.not.throw();
+        CAMP_BASE.MSG_ERROR = {
             ack: 0,
             sid: sid,
-            type: BinaryMessageType.ERROR,
+            type: CAMPFrameType.ERROR,
             payload: "client error occured, details: ..."
         } as ErrorMessage;
     });
 
     it("serializes ping_pong", () => {
-        expect(() => Cryo_Base.FRAME_PING_PONG = impl.PingPongFrame.Serialize(sid, 0, "ping")).to.not.throw();
-        Cryo_Base.MSG_PING_PONG = {
-            ack: 0,
+        expect(() => CAMP_BASE.FRAME_PING_PONG = impl.PingPongFrame.Serialize(sid, "ping")).to.not.throw();
+        CAMP_BASE.MSG_PING_PONG = {
             sid: sid,
-            type: BinaryMessageType.PING_PONG,
+            type: CAMPFrameType.PING_PONG,
             payload: "ping",
         } as PingMessage;
     });
 
     it("serializes utf8data", () => {
-        expect(() => Cryo_Base.FRAME_UTF8DATA = impl.Utf8DataFrame.Serialize(sid, 0, "some great plaintext!")).to.not.throw();
-        Cryo_Base.MSG_UTF8DATA = {
+        expect(() => CAMP_BASE.FRAME_UTF8DATA = impl.Utf8DataFrame.Serialize(sid, 0, "some great plaintext!")).to.not.throw();
+        CAMP_BASE.MSG_UTF8DATA = {
             ack: 0,
             sid: sid,
-            type: BinaryMessageType.UTF8DATA,
+            type: CAMPFrameType.UTF8DATA,
             payload: "some great plaintext!"
         } as UTF8DataMessage;
     });
 
     it("serializes binarydata", () => {
-        expect(() => Cryo_Base.FRAME_BINARYDATA = impl.BinaryDataFrame.Serialize(sid, 0, Buffer.from("meow", "utf8"))).to.not.throw();
-        Cryo_Base.MSG_BINARYDATA = {
+        expect(() => CAMP_BASE.FRAME_BINARYDATA = impl.BinaryDataFrame.Serialize(sid, 0, Buffer.from("meow", "utf8"))).to.not.throw();
+        CAMP_BASE.MSG_BINARYDATA = {
             ack: 0,
             sid: sid,
-            type: BinaryMessageType.BINARYDATA,
+            type: CAMPFrameType.BINARYDATA,
             payload: Buffer.from("meow", "utf8")
         } as BinaryDataMessage;
     });
 });
 
-const Cryo_Transaction: Record<string, Buffer | object> = {};
-describe("Namespace Cryo.Transaction Serialization", function () {
+const CAMP_TRANSACTION: Record<string, Buffer | object> = {};
+describe("Namespace CAMP.Transaction Serialization", function () {
     it("serializes tx_start", () => {
-        expect(() => Cryo_Transaction.FRAME_TX_START = impl.TXStartFrame.Serialize(sid, 0, txId, "some tran")).to.not.throw();
-        Cryo_Transaction.MSG_TX_START = {
+        expect(() => CAMP_TRANSACTION.FRAME_TX_START = impl.TXStartFrame.Serialize(sid, 0, txId, "some tran")).to.not.throw();
+        CAMP_TRANSACTION.MSG_TX_START = {
             ack: 0,
             sid: sid,
-            type: BinaryMessageType.TX_START,
+            type: CAMPFrameType.TX_START,
             txId: txId,
             txName: "some tran",
-            byteLength: null
+            byteLength: null,
+            behaviour: CAMP_FLOW_BEHAVIOUR.TX_PUSH
         } as TXStartMessage;
     });
 
     it("serializes tx_chunk", () => {
-        expect(() => Cryo_Transaction.FRAME_TX_CHUNK = impl.TXChunkFrame.Serialize(sid, txId, 2, Buffer.alloc(1024).fill(200))).to.not.throw();
-        Cryo_Transaction.MSG_TX_CHUNK = {
+        expect(() => CAMP_TRANSACTION.FRAME_TX_CHUNK = impl.TXChunkFrame.Serialize(sid, txId, 2n, Buffer.alloc(1024).fill(200))).to.not.throw();
+        CAMP_TRANSACTION.MSG_TX_CHUNK = {
             sid: sid,
-            type: BinaryMessageType.TX_CHUNK,
+            type: CAMPFrameType.TX_CHUNK,
             txId: txId,
             payload: Buffer.alloc(1024).fill(200),
-            seq: 2
+            offset: 2n
         } as TXChunkMessage;
     })
 
     it("serializes tx_finish", () => {
-        expect(() => Cryo_Transaction.FRAME_TX_FINISH = impl.TXFinishFrame.Serialize(sid, 0, txId)).to.not.throw();
-        Cryo_Transaction.MSG_TX_FINISH = {
+        expect(() => CAMP_TRANSACTION.FRAME_TX_FINISH = impl.TXFinishFrame.Serialize(sid, 0, txId)).to.not.throw();
+        CAMP_TRANSACTION.MSG_TX_FINISH = {
             ack: 0,
             sid: sid,
-            type: BinaryMessageType.TX_FINISH,
+            type: CAMPFrameType.TX_FINISH,
             txId: txId
         } as TXFinishMessage;
     })
 
-    it("serializes tx_flow", () => {
-        expect(() => Cryo_Transaction.FRAME_TX_FLOW = impl.TXFlowFrame.Serialize(sid, 0, CRYO_FLOW_BEHAVIOUR.TX_PULL)).to.not.throw();
-        Cryo_Transaction.MSG_TX_FLOW = {
-            ack: 0,
-            sid: sid,
-            type: BinaryMessageType.TX_FLOW,
-            behaviour: CRYO_FLOW_BEHAVIOUR.TX_PULL
-        } as TXFlowMessage;
-    });
-
     it("serializes tx_fetch", () => {
-        expect(() => Cryo_Transaction.FRAME_TX_FETCH = impl.TXFetchFrame.Serialize(sid, 0, 0xff, 12, 24)).to.not.throw();
-        Cryo_Transaction.MSG_TX_FETCH = {
+        expect(() => CAMP_TRANSACTION.FRAME_TX_FETCH = impl.TXFetchFrame.Serialize(sid, 0, 0xff, 12n, 24n)).to.not.throw();
+        CAMP_TRANSACTION.MSG_TX_FETCH = {
             ack: 0,
             sid: sid,
             txId: 0xff,
-            type: BinaryMessageType.TX_FETCH,
-            start: 12,
-            end: 24
+            type: CAMPFrameType.TX_FETCH,
+            start: 12n,
+            end: 24n
         } as TXFetchMessage;
     });
 
     it("Serializes tx_cancel", () => {
-        expect(() => Cryo_Transaction.FRAME_TX_CANCEL = impl.TXCancelFrame.Serialize(sid, 0, 0xff)).to.not.throw();
-        Cryo_Transaction.MSG_TX_CANCEL = {
+        expect(() => CAMP_TRANSACTION.FRAME_TX_CANCEL = impl.TXCancelFrame.Serialize(sid, 0, 0xff)).to.not.throw();
+        CAMP_TRANSACTION.MSG_TX_CANCEL = {
             ack: 0,
             sid: sid,
             txId: 0xff,
-            type: BinaryMessageType.TX_CANCEL
+            type: CAMPFrameType.TX_CANCEL
         } as TXCancelMessage;
     });
 });
 
-describe("Namespace: Cryo.Base Deserialization", function () {
-    it("deserializes endpoint info", () => expect(EndpointInfoFrame.Deserialize(Cryo_Base.FRAME_ENDPOINT_INFO as Buffer)).to.deep.equal(Cryo_Base.MSG_ENDPOINT_INFO, "ENDPOINT_INFO"));
-    it("deserializes bye", () => expect(ByeFrame.Deserialize(Cryo_Base.FRAME_BYE as Buffer)).to.deep.equal(Cryo_Base.MSG_BYE, "BYE"));
-    it("deserializes ack", () => expect(ACKFrame.Deserialize(Cryo_Base.FRAME_ACK as Buffer)).to.deep.equal(Cryo_Base.MSG_ACK, "ACK"));
-    it("deserializes error", () => expect(ErrorFrame.Deserialize(Cryo_Base.FRAME_ERROR as Buffer)).to.deep.equal(Cryo_Base.MSG_ERROR, "ERROR"));
-    it("deserializes ping_pong", () => expect(PingPongFrame.Deserialize(Cryo_Base.FRAME_PING_PONG as Buffer)).to.deep.equal(Cryo_Base.MSG_PING_PONG, "PING_PONG"));
-    it("deserializes utf8data", () => expect(Utf8DataFrame.Deserialize(Cryo_Base.FRAME_UTF8DATA as Buffer)).to.deep.equal(Cryo_Base.MSG_UTF8DATA, "UTF8DATA"));
-    it("deserializes binarydata", () => expect(BinaryDataFrame.Deserialize(Cryo_Base.FRAME_BINARYDATA as Buffer)).to.deep.equal(Cryo_Base.MSG_BINARYDATA, "BINARYDATA"));
+describe("Namespace: CAMP.Base Deserialization", function () {
+    it("deserializes endpoint info", () => expect(EndpointInfoFrame.Deserialize(CAMP_BASE.FRAME_ENDPOINT_INFO as Buffer)).to.deep.equal(CAMP_BASE.MSG_ENDPOINT_INFO, "ENDPOINT_INFO"));
+    it("deserializes bye", () => expect(ByeFrame.Deserialize(CAMP_BASE.FRAME_BYE as Buffer)).to.deep.equal(CAMP_BASE.MSG_BYE, "BYE"));
+    it("deserializes ack", () => expect(ACKFrame.Deserialize(CAMP_BASE.FRAME_ACK as Buffer)).to.deep.equal(CAMP_BASE.MSG_ACK, "ACK"));
+    it("deserializes error", () => expect(ErrorFrame.Deserialize(CAMP_BASE.FRAME_ERROR as Buffer)).to.deep.equal(CAMP_BASE.MSG_ERROR, "ERROR"));
+    it("deserializes ping_pong", () => expect(PingPongFrame.Deserialize(CAMP_BASE.FRAME_PING_PONG as Buffer)).to.deep.equal(CAMP_BASE.MSG_PING_PONG, "PING_PONG"));
+    it("deserializes utf8data", () => expect(Utf8DataFrame.Deserialize(CAMP_BASE.FRAME_UTF8DATA as Buffer)).to.deep.equal(CAMP_BASE.MSG_UTF8DATA, "UTF8DATA"));
+    it("deserializes binarydata", () => expect(BinaryDataFrame.Deserialize(CAMP_BASE.FRAME_BINARYDATA as Buffer)).to.deep.equal(CAMP_BASE.MSG_BINARYDATA, "BINARYDATA"));
 });
 
-describe("Namespace: Cryo.Transaction Deserialization", function () {
-    it("deserializes tx_start", () => expect(TXStartFrame.Deserialize(Cryo_Transaction.FRAME_TX_START as Buffer)).to.deep.equal(Cryo_Transaction.MSG_TX_START));
-    it("deserializes tx_chunk", () => expect(TXChunkFrame.Deserialize(Cryo_Transaction.FRAME_TX_CHUNK as Buffer)).to.deep.equal(Cryo_Transaction.MSG_TX_CHUNK));
-    it("deserializes tx_finish", () => expect(TXFinishFrame.Deserialize(Cryo_Transaction.FRAME_TX_FINISH as Buffer)).to.deep.equal(Cryo_Transaction.MSG_TX_FINISH));
-    it("deserializes tx_flow", () => expect(TXFlowFrame.Deserialize(Cryo_Transaction.FRAME_TX_FLOW as Buffer)).to.deep.equal(Cryo_Transaction.MSG_TX_FLOW));
-    it("deserializes tx_fetch", () => expect(TXFetchFrame.Deserialize(Cryo_Transaction.FRAME_TX_FETCH as Buffer)).to.deep.equal(Cryo_Transaction.MSG_TX_FETCH));
-    it("deserializes tx_cancel", () => expect(TXCancelFrame.Deserialize(Cryo_Transaction.FRAME_TX_CANCEL as Buffer)).to.deep.equal(Cryo_Transaction.MSG_TX_CANCEL));
+describe("Namespace: CAMP.Transaction Deserialization", function () {
+    it("deserializes tx_start", () => expect(TXStartFrame.Deserialize(CAMP_TRANSACTION.FRAME_TX_START as Buffer)).to.deep.equal(CAMP_TRANSACTION.MSG_TX_START));
+    it("deserializes tx_chunk", () => expect(TXChunkFrame.Deserialize(CAMP_TRANSACTION.FRAME_TX_CHUNK as Buffer)).to.deep.equal(CAMP_TRANSACTION.MSG_TX_CHUNK));
+    it("deserializes tx_finish", () => expect(TXFinishFrame.Deserialize(CAMP_TRANSACTION.FRAME_TX_FINISH as Buffer)).to.deep.equal(CAMP_TRANSACTION.MSG_TX_FINISH));
+    it("deserializes tx_fetch", () => expect(TXFetchFrame.Deserialize(CAMP_TRANSACTION.FRAME_TX_FETCH as Buffer)).to.deep.equal(CAMP_TRANSACTION.MSG_TX_FETCH));
+    it("deserializes tx_cancel", () => expect(TXCancelFrame.Deserialize(CAMP_TRANSACTION.FRAME_TX_CANCEL as Buffer)).to.deep.equal(CAMP_TRANSACTION.MSG_TX_CANCEL));
 });

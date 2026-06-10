@@ -1,13 +1,12 @@
-import {CryoMessage, BinaryMessageType} from "../protocol_base.js";
+import {CAMPMessage, CAMPFrameType} from "../protocol_base.js";
 
-export type BinaryDataMessage = CryoMessage<{
+export type BinaryDataMessage = CAMPMessage<{
     ack: number;
     payload: Buffer;
-}, BinaryMessageType.BINARYDATA>;
+}, CAMPFrameType.BINARYDATA>;
 
-
-export type TXChunkMessage = CryoMessage<{
+export type TXChunkMessage = CAMPMessage<{
     txId: number;
-    seq: number;
+    offset: bigint;
     payload: Buffer;
-}, BinaryMessageType.TX_CHUNK>;
+}, CAMPFrameType.TX_CHUNK>;

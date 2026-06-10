@@ -1,28 +1,28 @@
-export class CryoBuffer {
+export class CAMPBuffer {
     private view: DataView;
 
     public constructor(public buffer: Uint8Array) {
         this.view = new DataView(buffer.buffer, buffer.byteOffset, buffer.byteLength);
     }
 
-    public static alloc(length: number): CryoBuffer {
-        return new CryoBuffer(new Uint8Array(length));
+    public static alloc(length: number): CAMPBuffer {
+        return new CAMPBuffer(new Uint8Array(length));
     }
 
-    public static from(input: string, encoding: "utf8" | "hex" = "utf8"): CryoBuffer {
+    public static from(input: string, encoding: "utf8" | "hex" = "utf8"): CAMPBuffer {
         if (encoding === "utf8")
-            return new CryoBuffer(new TextEncoder().encode(input));
+            return new CAMPBuffer(new TextEncoder().encode(input));
 
         const data = new Uint8Array(input.length / 2);
         for (let i = 0; i < data.length; i++)
             data[i] = parseInt(input.substring(i * 2, i * 2 + 2), 16);
 
-        return new CryoBuffer(data);
+        return new CAMPBuffer(data);
     }
 
-    public static concat(buffers: CryoBuffer[]): CryoBuffer {
+    public static concat(buffers: CAMPBuffer[]): CAMPBuffer {
         if (buffers.length === 0)
-            return CryoBuffer.alloc(0);
+            return CAMPBuffer.alloc(0);
 
         const length_total = buffers.reduce((acc, v) => acc + v.byteLength, 0)
         const result = new Uint8Array(length_total);
@@ -33,7 +33,7 @@ export class CryoBuffer {
             offset += buf.byteLength;
         }
 
-        return new CryoBuffer(result);
+        return new CAMPBuffer(result);
     }
 
     public fill(value: number) {
@@ -59,6 +59,10 @@ export class CryoBuffer {
         this.view.setBigUint64(offset, value);
     }
 
+    public writeBigInt64(value: bigint, offset: number): void {
+        this.view.setBigInt64(offset, value);
+    }
+
     public writeUint8(value: number, offset: number): void {
         this.view.setUint8(offset, value);
     }
@@ -71,6 +75,10 @@ export class CryoBuffer {
         return this.view.getBigUint64(offset);
     }
 
+    public readBigInt64BE(offset: number): bigint {
+        return this.view.getBigInt64(offset);
+    }
+
     public readUint8(offset: number): number {
         return this.view.getUint8(offset);
     }
@@ -79,8 +87,11 @@ export class CryoBuffer {
         this.buffer.set(new TextEncoder().encode(text), offset);
     }
 
-    public set(buffer: CryoBuffer, offset: number): void {
-        this.buffer.set(buffer.buffer, offset);
+    public set(buffer: CAMPBuffer | Uint8Array, offset: number): void {
+        if(buffer instanceof CAMPBuffer)
+            this.buffer.set(buffer.buffer, offset);
+        else
+            this.buffer.set(buffer, offset);
     }
 
     public toString(encoding: "utf8" | "hex" = "utf8"): string {
@@ -92,11 +103,11 @@ export class CryoBuffer {
             .join("");
     }
 
-    public subarray(start: number, end?: number): CryoBuffer {
-        return new CryoBuffer(this.buffer.subarray(start, end));
+    public subarray(start: number, end?: number): CAMPBuffer {
+        return new CAMPBuffer(this.buffer.subarray(start, end));
     }
 
-    public copy(target: CryoBuffer, target_start = 0): void {
+    public copy(target: CAMPBuffer, target_start = 0): void {
         target.buffer.set(this.buffer, target_start);
     }
 

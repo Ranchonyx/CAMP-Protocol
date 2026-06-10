@@ -1,6 +1,6 @@
 export type { BinaryDataMessage, TXChunkMessage } from "./node/protocol.js";
-export type { PingMessage, ErrorMessage, UTF8DataMessage, AckMessage, CryoMessage, EndpointInfoMessage, ByeMessage, TXStartMessage, TXFinishMessage, TXFetchMessage, TXFlowMessage, TXCancelMessage } from "./protocol_base.js";
-export { BinaryMessageType, cryoNewId, cryoHasFeatureFlag, CRYO_PROTOCOL_VERSION, CRYO_FEATURE_MASK_TRANSACTION, CRYO_PROTOCOL_FEATURES, CRYO_FLOW_BEHAVIOUR } from "./protocol_base.js";
+export type { PingMessage, ErrorMessage, UTF8DataMessage, AckMessage, CAMPMessage, EndpointInfoMessage, ByeMessage, TXStartMessage, TXFinishMessage, TXFetchMessage, TXCancelMessage } from "./protocol_base.js";
+export { CAMPFrameType, CAMPNewId, CAMPHasFeatureFlag, CAMP_PROTOCOL_VERSION, CAMP_FEATURE_MASK_TRANSACTION, CAMP_PROTOCOL_FEATURES, CAMP_FLOW_BEHAVIOUR } from "./protocol_base.js";
 export { EndpointInfoFrame } from "./node/Protocol/Basic/EndpointInfoFrame.js";
 export { ByeFrame } from "./node/Protocol/Basic/ByeFrame.js";
 export { Utf8DataFrame } from "./node/Protocol/Basic/Utf8DataFrame.js";
@@ -11,7 +11,6 @@ export { PingPongFrame } from "./node/Protocol/Basic/PingPongFrame.js";
 export { TXStartFrame } from "./node/Protocol/Transaction/TXStartFrame.js";
 export { TXChunkFrame } from "./node/Protocol/Transaction/TXChunkFrame.js";
 export { TXFinishFrame } from "./node/Protocol/Transaction/TXFinishFrame.js";
-export { TXFlowFrame } from "./node/Protocol/Transaction/TXFlowFrame.js";
 export { TXFetchFrame } from "./node/Protocol/Transaction/TXFetchFrame.js";
 export { BufferUtil } from "./node/BufferUtil.js";
 export { TXCancelFrame } from "./node/Protocol/Transaction/TXCancelFrame.js";

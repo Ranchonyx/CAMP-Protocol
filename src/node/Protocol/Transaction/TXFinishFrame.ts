@@ -1,4 +1,4 @@
-import {BinaryMessageType, DeserializationError, TXFinishMessage} from "../../../protocol_base.js";
+import {CAMPFrameType, DeserializationError, TXFinishMessage} from "../../../protocol_base.js";
 
 
 export class TXFinishFrame {
@@ -8,7 +8,7 @@ export class TXFinishFrame {
         const ack = value.readUInt32BE(9);
         const txId = value.readUInt32BE(13);
 
-        if (type !== BinaryMessageType.TX_FINISH)
+        if (type !== CAMPFrameType.TX_FINISH)
             throw new DeserializationError("Attempt to deserialize a non-tx_finish message!");
 
         return {
@@ -23,7 +23,7 @@ export class TXFinishFrame {
         const msg_buf = Buffer.alloc(8 + 4 + 1 + 4);
 
         msg_buf.writeBigUInt64BE(sid, 0);
-        msg_buf.writeUint8(BinaryMessageType.TX_FINISH, 8);
+        msg_buf.writeUint8(CAMPFrameType.TX_FINISH, 8);
         msg_buf.writeUInt32BE(ack, 9);
         msg_buf.writeUInt32BE(txId, 13);
 

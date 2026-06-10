@@ -1,22 +1,22 @@
-import { CryoBuffer } from "./CryoBuffer.js";
-import { BinaryMessageType, BufferEncoding } from "../protocol_base.js";
+import { CAMPBuffer } from "./CAMPBuffer.js";
+import { CAMPFrameType, CAMPBufferEncoding } from "../protocol_base.js";
 export declare class BufferUtil {
-    static GetType(message: CryoBuffer): BinaryMessageType;
-    static GetAck(message: CryoBuffer): number;
-    static GetSid(message: CryoBuffer): bigint;
-    static GetPayload(message: CryoBuffer, encoding: BufferEncoding): string;
+    static GetType(message: CAMPBuffer): CAMPFrameType;
+    static GetAck(message: CAMPBuffer): number;
+    static GetSid(message: CAMPBuffer): bigint;
+    static GetPayload(message: CAMPBuffer, encoding: CAMPBufferEncoding): string;
     static Transaction: {
         new (): {};
-        GetChunkTxId(message: CryoBuffer): number;
-        GetChunkSeq(message: CryoBuffer): number;
-        GetChunkPayload(message: CryoBuffer, encoding: BufferEncoding): string;
-        GetTxId(message: CryoBuffer): number;
-        GetTxSize(message: CryoBuffer): number;
-        GetTxName(message: CryoBuffer, encoding?: "utf8" | "hex"): string;
-        GetFlowBehaviour(message: CryoBuffer): number;
-        GetFetchTxId(message: CryoBuffer): number;
-        GetFetchStart(message: CryoBuffer): number;
-        GetFetchEnd(message: CryoBuffer): number;
+        GetChunkTxId(message: CAMPBuffer): number;
+        GetChunkSeq(message: CAMPBuffer): number;
+        GetChunkPayload(message: CAMPBuffer, encoding: CAMPBufferEncoding): string;
+        GetTxId(message: CAMPBuffer): number;
+        GetTxSize(message: CAMPBuffer): number;
+        GetTxName(message: CAMPBuffer, encoding?: "utf8" | "hex"): string;
+        GetFlowBehaviour(message: CAMPBuffer): number;
+        GetFetchTxId(message: CAMPBuffer): number;
+        GetFetchStart(message: CAMPBuffer): number;
+        GetFetchEnd(message: CAMPBuffer): number;
     };
 }
 //# sourceMappingURL=BufferUtil.d.ts.map

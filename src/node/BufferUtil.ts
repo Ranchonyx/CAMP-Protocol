@@ -1,7 +1,7 @@
-import {BinaryMessageType, BufferEncoding} from "../protocol_base.js";
+import {CAMPFrameType, CAMPBufferEncoding} from "../protocol_base.js";
 
 export class BufferUtil {
-    public static GetType(message: Buffer): BinaryMessageType {
+    public static GetType(message: Buffer): CAMPFrameType {
         return message.readUint8(8);
     }
 
@@ -13,7 +13,7 @@ export class BufferUtil {
         return message.readBigUInt64BE(0);
     }
 
-    public static GetPayload(message: Buffer, encoding: BufferEncoding): string {
+    public static GetPayload(message: Buffer, encoding: CAMPBufferEncoding): string {
         return message.subarray(13).toString(encoding);
     }
 
@@ -26,7 +26,7 @@ export class BufferUtil {
             return message.readUInt32BE(13);
         }
 
-        public static GetChunkPayload(message: Buffer, encoding: BufferEncoding): string {
+        public static GetChunkPayload(message: Buffer, encoding: CAMPBufferEncoding): string {
             return message.subarray(17).toString(encoding);
         }
 

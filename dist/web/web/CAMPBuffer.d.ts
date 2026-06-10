@@ -1,10 +1,10 @@
-export declare class CryoBuffer {
+export declare class CAMPBuffer {
     buffer: Uint8Array;
     private view;
     constructor(buffer: Uint8Array);
-    static alloc(length: number): CryoBuffer;
-    static from(input: string, encoding?: "utf8" | "hex"): CryoBuffer;
-    static concat(buffers: CryoBuffer[]): CryoBuffer;
+    static alloc(length: number): CAMPBuffer;
+    static from(input: string, encoding?: "utf8" | "hex"): CAMPBuffer;
+    static concat(buffers: CAMPBuffer[]): CAMPBuffer;
     fill(value: number): this;
     writeUInt32BE(value: number, offset: number): void;
     writeInt32BE(value: number, offset: number): void;
@@ -17,10 +17,10 @@ export declare class CryoBuffer {
     readBigInt64BE(offset: number): bigint;
     readUint8(offset: number): number;
     write(text: string, offset?: number): void;
-    set(buffer: CryoBuffer | Uint8Array, offset: number): void;
+    set(buffer: CAMPBuffer | Uint8Array, offset: number): void;
     toString(encoding?: "utf8" | "hex"): string;
-    subarray(start: number, end?: number): CryoBuffer;
-    copy(target: CryoBuffer, target_start?: number): void;
+    subarray(start: number, end?: number): CAMPBuffer;
+    copy(target: CAMPBuffer, target_start?: number): void;
     get byteLength(): number;
 }
-//# sourceMappingURL=CryoBuffer.d.ts.map
+//# sourceMappingURL=CAMPBuffer.d.ts.map

@@ -1,4 +1,4 @@
-export class CryoBuffer {
+export class CAMPBuffer {
     buffer;
     view;
     constructor(buffer) {
@@ -6,19 +6,19 @@ export class CryoBuffer {
         this.view = new DataView(buffer.buffer, buffer.byteOffset, buffer.byteLength);
     }
     static alloc(length) {
-        return new CryoBuffer(new Uint8Array(length));
+        return new CAMPBuffer(new Uint8Array(length));
     }
     static from(input, encoding = "utf8") {
         if (encoding === "utf8")
-            return new CryoBuffer(new TextEncoder().encode(input));
+            return new CAMPBuffer(new TextEncoder().encode(input));
         const data = new Uint8Array(input.length / 2);
         for (let i = 0; i < data.length; i++)
             data[i] = parseInt(input.substring(i * 2, i * 2 + 2), 16);
-        return new CryoBuffer(data);
+        return new CAMPBuffer(data);
     }
     static concat(buffers) {
         if (buffers.length === 0)
-            return CryoBuffer.alloc(0);
+            return CAMPBuffer.alloc(0);
         const length_total = buffers.reduce((acc, v) => acc + v.byteLength, 0);
         const result = new Uint8Array(length_total);
         let offset = 0;
@@ -26,7 +26,7 @@ export class CryoBuffer {
             result.set(buf.buffer, offset);
             offset += buf.byteLength;
         }
-        return new CryoBuffer(result);
+        return new CAMPBuffer(result);
     }
     fill(value) {
         for (let b = 0; b < this.view.byteLength; b++)
@@ -67,7 +67,7 @@ export class CryoBuffer {
         this.buffer.set(new TextEncoder().encode(text), offset);
     }
     set(buffer, offset) {
-        if (buffer instanceof CryoBuffer)
+        if (buffer instanceof CAMPBuffer)
             this.buffer.set(buffer.buffer, offset);
         else
             this.buffer.set(buffer, offset);
@@ -80,7 +80,7 @@ export class CryoBuffer {
             .join("");
     }
     subarray(start, end) {
-        return new CryoBuffer(this.buffer.subarray(start, end));
+        return new CAMPBuffer(this.buffer.subarray(start, end));
     }
     copy(target, target_start = 0) {
         target.buffer.set(this.buffer, target_start);
@@ -89,4 +89,4 @@ export class CryoBuffer {
         return this.buffer.byteLength;
     }
 }
-//# sourceMappingURL=CryoBuffer.js.map
+//# sourceMappingURL=CAMPBuffer.js.map

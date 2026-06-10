@@ -1,5 +1,5 @@
 {
-  "name": "cryo-protocol",
+  "name": "camp-protocol",
   "type": "module",
   "scripts": {
     "build-web": "tsc -p tsconfig.web.json",
@@ -24,7 +24,7 @@
     }
   },
   "types": "./dist/node/index.node.d.ts",
-  "version": "1.4.2",
+  "version": "1.0.0",
   "devDependencies": {
     "@types/chai": "^5.2.3",
     "@types/mocha": "^10.0.10",

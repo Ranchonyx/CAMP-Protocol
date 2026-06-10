@@ -1,7 +1,7 @@
 import { BinaryDataMessage } from "../../protocol.js";
-import { CryoBuffer } from "../../CryoBuffer.js";
+import { CAMPBuffer } from "../../CAMPBuffer.js";
 export declare class BinaryDataFrame {
-    static Deserialize(value: CryoBuffer): BinaryDataMessage;
-    static Serialize(sid: bigint, ack: number, payload: CryoBuffer | null): CryoBuffer;
+    static Deserialize(value: CAMPBuffer): BinaryDataMessage;
+    static Serialize(sid: bigint, ack: number, payload: CAMPBuffer | null): CAMPBuffer;
 }
 //# sourceMappingURL=BinaryDataFrame.d.ts.map

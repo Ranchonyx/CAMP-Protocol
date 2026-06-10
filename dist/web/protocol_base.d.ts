@@ -1,16 +1,20 @@
-export declare const CRYO_MAX_PAYLOAD: number;
-export declare const CRYO_PROTOCOL_VERSION = 1;
-export declare const CRYO_FEATURE_MASK_TRANSACTION = 1n;
-export declare const CRYO_PROTOCOL_FEATURES: bigint;
-export declare function cryoNewId(): bigint;
-export declare function cryoHasFeatureFlag(flags: bigint, flag: bigint): boolean;
+export declare const CAMP_MAX_PAYLOAD: number;
+export declare const CAMP_PROTOCOL_VERSION = 1;
+export declare const CAMP_FEATURE_MASK_TRANSACTION = 1n;
+export declare const CAMP_PROTOCOL_FEATURES: bigint;
+export declare enum CAMP_FLOW_BEHAVIOUR {
+    TX_PUSH = 0,
+    TX_PULL = 1
+}
+export declare function CAMPNewId(): bigint;
+export declare function CAMPHasFeatureFlag(flags: bigint, flag: bigint): boolean;
 export declare class DeserializationError extends Error {
     constructor(pMessage: string);
 }
 export declare class SerializationError extends Error {
     constructor(pMessage: string);
 }
-export declare enum BinaryMessageType {
+export declare enum CAMPFrameType {
     ENDPOINT_INFO = 255,
     BYE = 254,
     ACK = 253,
@@ -21,65 +25,56 @@ export declare enum BinaryMessageType {
     TX_START = 0,
     TX_CHUNK = 1,
     TX_FINISH = 2,
-    TX_FLOW = 3,
-    TX_FETCH = 4,
-    TX_CANCEL = 5
+    TX_FETCH = 3,
+    TX_CANCEL = 4
 }
-export declare enum CRYO_FLOW_BEHAVIOUR {
-    TX_PUSH = 0,
-    TX_PULL = 1
-}
-export type BufferEncoding = "utf8" | "hex";
-export type CryoMessage<T, U extends BinaryMessageType> = {
+export type CAMPBufferEncoding = "utf8" | "hex";
+export type CAMPMessage<T, U extends CAMPFrameType> = {
     sid: bigint;
     type: U;
 } & T;
-export type EndpointInfoMessage = CryoMessage<{
+export type EndpointInfoMessage = CAMPMessage<{
     ack: number;
     version: number;
     features: bigint;
-}, BinaryMessageType.ENDPOINT_INFO>;
-export type ByeMessage = CryoMessage<{
+}, CAMPFrameType.ENDPOINT_INFO>;
+export type ByeMessage = CAMPMessage<{
     ack: number;
     reason: string;
-}, BinaryMessageType.BYE>;
-export type AckMessage = CryoMessage<{
+}, CAMPFrameType.BYE>;
+export type AckMessage = CAMPMessage<{
     ack: number;
-}, BinaryMessageType.ACK>;
-export type PingMessage = CryoMessage<{
-    ack: number;
+}, CAMPFrameType.ACK>;
+export type PingMessage = CAMPMessage<{
     payload: "ping" | "pong";
-}, BinaryMessageType.PING_PONG>;
-export type UTF8DataMessage = CryoMessage<{
+}, CAMPFrameType.PING_PONG>;
+export type UTF8DataMessage = CAMPMessage<{
     ack: number;
     payload: string;
-}, BinaryMessageType.UTF8DATA>;
-export type TXStartMessage = CryoMessage<{
+}, CAMPFrameType.UTF8DATA>;
+export type TXStartMessage = CAMPMessage<{
     ack: number;
     txId: number;
     txName: string;
-    byteLength: number | null;
-}, BinaryMessageType.TX_START>;
-export type TXFinishMessage = CryoMessage<{
+    byteLength: bigint | null;
+    behaviour: CAMP_FLOW_BEHAVIOUR;
+}, CAMPFrameType.TX_START>;
+export type TXFinishMessage = CAMPMessage<{
     ack: number;
     txId: number;
-}, BinaryMessageType.TX_FINISH>;
-export type TXFlowMessage = CryoMessage<{
-    ack: number;
-    behaviour: CRYO_FLOW_BEHAVIOUR;
-}, BinaryMessageType.TX_FLOW>;
-export type TXFetchMessage = CryoMessage<{
+}, CAMPFrameType.TX_FINISH>;
+export type TXFetchMessage = CAMPMessage<{
     ack: number;
     txId: number;
-    start: number;
-    end: number;
-}, BinaryMessageType.TX_FETCH>;
-export type TXCancelMessage = CryoMessage<{
+    start: bigint;
+    end: bigint;
+}, CAMPFrameType.TX_FETCH>;
+export type TXCancelMessage = CAMPMessage<{
     ack: number;
     txId: number;
-}, BinaryMessageType.TX_CANCEL>;
-export type ErrorMessage = CryoMessage<{
+}, CAMPFrameType.TX_CANCEL>;
+export type ErrorMessage = CAMPMessage<{
     ack: number;
     payload: string;
-}, BinaryMessageType.ERROR>;
+}, CAMPFrameType.ERROR>;
 //# sourceMappingURL=protocol_base.d.ts.map

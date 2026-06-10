@@ -1,7 +1,7 @@
 import { PingMessage } from "../../../protocol_base.js";
-import { CryoBuffer } from "../../CryoBuffer.js";
+import { CAMPBuffer } from "../../CAMPBuffer.js";
 export declare class PingPongFrame {
-    static Deserialize(value: CryoBuffer): PingMessage;
-    static Serialize(sid: bigint, ack: number, payload: "ping" | "pong"): CryoBuffer;
+    static Deserialize(value: CAMPBuffer): PingMessage;
+    static Serialize(sid: bigint, payload: "ping" | "pong"): CAMPBuffer;
 }
 //# sourceMappingURL=PingPongFrame.d.ts.map

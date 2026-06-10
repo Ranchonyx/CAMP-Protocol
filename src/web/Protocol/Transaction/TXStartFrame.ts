@@ -1,17 +1,25 @@
-import {BinaryMessageType, DeserializationError, TXStartMessage} from "../../../protocol_base.js";
+import {
+    CAMPFrameType,
+    CAMP_FLOW_BEHAVIOUR,
+    CAMP_MAX_PAYLOAD,
+    DeserializationError,
+    SerializationError,
+    TXStartMessage
+} from "../../../protocol_base.js";
 
-import {CryoBuffer} from "../../CryoBuffer.js";
+import {CAMPBuffer} from "../../CAMPBuffer.js";
 
 export class TXStartFrame {
-    public static Deserialize(value: CryoBuffer): TXStartMessage {
+    public static Deserialize(value: CAMPBuffer): TXStartMessage {
         const sid = value.readBigUInt64BE(0);
         const type = value.readUint8(8);
         const ack = value.readUInt32BE(9);
         const txId = value.readUInt32BE(13);
-        const byteLength = value.readInt32BE(17);
-        const txName = value.subarray(21).toString("utf8");
+        const byteLength = value.readBigInt64BE(17);
+        const behaviour = value.readUint8(18) as CAMP_FLOW_BEHAVIOUR;
+        const txName = value.subarray(26).toString("utf8");
 
-        if (type !== BinaryMessageType.TX_START)
+        if (type !== CAMPFrameType.TX_START)
             throw new DeserializationError("Attempt to deserialize a non-tx_start message!");
 
         return {
@@ -20,19 +28,24 @@ export class TXStartFrame {
             type,
             txId,
             txName,
-            byteLength: byteLength >= 0 ? byteLength : null
+            byteLength: byteLength >= 0 ? byteLength : null,
+            behaviour
         }
     }
 
-    public static Serialize(sid: bigint, ack: number, txId: number, name: string = "anonymous", byteLength: number = -1): CryoBuffer {
-        const msg_buf = CryoBuffer.alloc(8 + 1 + 4 + 4 + 4 + CryoBuffer.from(name, "utf8").byteLength);
+    public static Serialize(sid: bigint, ack: number, txId: number, name: string = "anonymous", byteLength: bigint = -1n, behaviour: CAMP_FLOW_BEHAVIOUR = CAMP_FLOW_BEHAVIOUR.TX_PUSH): CAMPBuffer {
+        if (CAMPBuffer.from(name).byteLength > CAMP_MAX_PAYLOAD)
+            throw new SerializationError(`Payload size of ${CAMP_MAX_PAYLOAD} bytes exceeded in parameter 'name'!`);
+
+        const msg_buf = CAMPBuffer.alloc(8 + 1 + 4 + 4 + 8 + 1 + CAMPBuffer.from(name, "utf8").byteLength);
 
         msg_buf.writeBigUInt64BE(sid, 0);
-        msg_buf.writeUint8(BinaryMessageType.TX_START, 8);
+        msg_buf.writeUint8(CAMPFrameType.TX_START, 8);
         msg_buf.writeUInt32BE(ack, 9);
         msg_buf.writeUInt32BE(txId, 13);
-        msg_buf.writeInt32BE(byteLength, 17);
-        msg_buf.set(CryoBuffer.from(name, "utf8"), 21);
+        msg_buf.writeBigInt64(byteLength, 17);
+        msg_buf.writeUint8(behaviour, 18);
+        msg_buf.set(CAMPBuffer.from(name, "utf8"), 26);
 
         return msg_buf;
     }
