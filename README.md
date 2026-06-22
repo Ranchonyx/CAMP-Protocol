@@ -395,14 +395,19 @@ The version numbering scheme is implementation-defined.
 
 # Implementations
 
-- [CAMP-Server in TypeScript under Node.Js](https://github.com/Ranchonyx/Cryo-Server)
+- [CAMP-Server in TypeScript under Node.Js](https://github.com/Ranchonyx/CAMP-Server)
 - [CAMP client library in TypeScript under modern browsers](https://github.com/Ranchonyx/Cryo-Client-Browser)
 - [CAMP client library in TypeScript under Node.Js](https://github.com/Ranchonyx/Cryo-Client-Node)
 
 # IANA Considerations
+CAMP is a registered Websocket subprotocol.
 
-This document requests registration of the following WebSocket subprotocol name in the IANA WebSocket Subprotocol Name
-Registry.
 Subprotocol Identifier: camp
+
 Subprotocol Common Name: Cryo Application Messaging Protocol (CAMP)
+
 Subprotocol Definition: This document
+
+# Licensing
+
+CAMP is licensed under Apache License 2.0.
