@@ -1,5 +1,5 @@
-import {CAMPBuffer} from "./CAMPBuffer.js";
-import {CAMPFrameType, CAMPBufferEncoding} from "../protocol_base.js";
+import { CAMPBuffer } from "./CAMPBuffer.js";
+import { CAMPFrameType, CAMPBufferEncoding } from "../protocol_base.js";
 
 export class BufferUtil {
     public static GetType(message: CAMPBuffer): CAMPFrameType {
@@ -18,45 +18,55 @@ export class BufferUtil {
         return message.subarray(13).toString(encoding);
     }
 
-    public static Transaction = class {
-        public static GetChunkTxId(message: CAMPBuffer): number {
-            return message.readUInt32BE(9);
-        }
-
-        public static GetChunkSeq(message: CAMPBuffer): number {
+    public static EndpointInfo = class {
+        public static GetVersion(message: CAMPBuffer): number {
             return message.readUInt32BE(13);
         }
 
-        public static GetChunkPayload(message: CAMPBuffer, encoding: CAMPBufferEncoding): string {
-            return message.subarray(17).toString(encoding);
+        public static GetFlags(message: CAMPBuffer): bigint {
+            return message.readBigUInt64BE(17);
         }
+    };
 
+    public static Transaction = class {
         public static GetTxId(message: CAMPBuffer): number {
             return message.readUInt32BE(13);
         }
 
-        public static GetTxSize(message: CAMPBuffer): number {
-            return message.readInt32BE(17);
-        }
-
-        public static GetTxName(message: CAMPBuffer, encoding: "utf8" | "hex" = "utf8"): string {
-            return message.subarray(21).toString(encoding);
+        public static GetTxSize(message: CAMPBuffer): bigint {
+            return message.readBigInt64BE(17);
         }
 
         public static GetFlowBehaviour(message: CAMPBuffer): number {
-            return message.readUint8(13);
+            return message.readUint8(25);
+        }
+
+        public static GetTxName(message: CAMPBuffer, encoding: "utf8" | "hex" = "utf8"): string {
+            return message.subarray(26).toString(encoding);
+        }
+
+        public static GetChunkTxId(message: CAMPBuffer): number {
+            return message.readUInt32BE(9);
+        }
+
+        public static GetChunkOffset(message: CAMPBuffer): bigint {
+            return message.readBigUInt64BE(13);
+        }
+
+        public static GetChunkPayload(message: CAMPBuffer, encoding: CAMPBufferEncoding): string {
+            return message.subarray(21).toString(encoding);
         }
 
         public static GetFetchTxId(message: CAMPBuffer): number {
             return message.readUInt32BE(13);
         }
 
-        public static GetFetchStart(message: CAMPBuffer): number {
-            return message.readUInt32BE(17);
+        public static GetFetchStart(message: CAMPBuffer): bigint {
+            return message.readBigUInt64BE(17);
         }
 
-        public static GetFetchEnd(message: CAMPBuffer): number {
-            return message.readUInt32BE(21);
+        public static GetFetchEnd(message: CAMPBuffer): bigint {
+            return message.readBigUInt64BE(25);
         }
-    }
+    };
 }
