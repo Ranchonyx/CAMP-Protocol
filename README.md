@@ -3,6 +3,8 @@
 The Cryo Application Messaging Protocol (CAMP) is a lightweight WebSocket subprotocol for application messaging, binary
 payload exchange, acknowledgements, and flow-controlled transactions.
 
+[![Socket Badge](https://badge.socket.dev/npm/package/camp-protocol/1.1.0)](https://badge.socket.dev/npm/package/camp-protocol/1.1.0)
+
 # Design Goals
 
 A lot of WebSocket libraries and frameworks introduce their own abstractions such as
@@ -400,6 +402,7 @@ The version numbering scheme is implementation-defined.
 - [CAMP client library in TypeScript under Node.Js](https://github.com/Ranchonyx/Cryo-Client-Node)
 
 # IANA Considerations
+
 CAMP is a registered Websocket subprotocol.
 
 Subprotocol Identifier: camp
