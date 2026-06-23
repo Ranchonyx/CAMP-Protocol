@@ -7,7 +7,7 @@ export class TXStartFrame {
         const ack = value.readUInt32BE(9);
         const txId = value.readUInt32BE(13);
         const byteLength = value.readBigInt64BE(17);
-        const behaviour = value.readUint8(18);
+        const behaviour = value.readUint8(25);
         const txName = value.subarray(26).toString("utf8");
         if (type !== CAMPFrameType.TX_START)
             throw new DeserializationError("Attempt to deserialize a non-tx_start message!");
@@ -30,7 +30,7 @@ export class TXStartFrame {
         msg_buf.writeUInt32BE(ack, 9);
         msg_buf.writeUInt32BE(txId, 13);
         msg_buf.writeBigInt64(byteLength, 17);
-        msg_buf.writeUint8(behaviour, 18);
+        msg_buf.writeUint8(behaviour, 25);
         msg_buf.set(CAMPBuffer.from(name, "utf8"), 26);
         return msg_buf;
     }
