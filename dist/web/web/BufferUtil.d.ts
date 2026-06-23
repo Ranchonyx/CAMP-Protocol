@@ -5,18 +5,23 @@ export declare class BufferUtil {
     static GetAck(message: CAMPBuffer): number;
     static GetSid(message: CAMPBuffer): bigint;
     static GetPayload(message: CAMPBuffer, encoding: CAMPBufferEncoding): string;
+    static EndpointInfo: {
+        new (): {};
+        GetVersion(message: CAMPBuffer): number;
+        GetFlags(message: CAMPBuffer): bigint;
+    };
     static Transaction: {
         new (): {};
-        GetChunkTxId(message: CAMPBuffer): number;
-        GetChunkSeq(message: CAMPBuffer): number;
-        GetChunkPayload(message: CAMPBuffer, encoding: CAMPBufferEncoding): string;
         GetTxId(message: CAMPBuffer): number;
-        GetTxSize(message: CAMPBuffer): number;
-        GetTxName(message: CAMPBuffer, encoding?: "utf8" | "hex"): string;
+        GetTxSize(message: CAMPBuffer): bigint;
         GetFlowBehaviour(message: CAMPBuffer): number;
+        GetTxName(message: CAMPBuffer, encoding?: "utf8" | "hex"): string;
+        GetChunkTxId(message: CAMPBuffer): number;
+        GetChunkOffset(message: CAMPBuffer): bigint;
+        GetChunkPayload(message: CAMPBuffer, encoding: CAMPBufferEncoding): string;
         GetFetchTxId(message: CAMPBuffer): number;
-        GetFetchStart(message: CAMPBuffer): number;
-        GetFetchEnd(message: CAMPBuffer): number;
+        GetFetchStart(message: CAMPBuffer): bigint;
+        GetFetchEnd(message: CAMPBuffer): bigint;
     };
 }
 //# sourceMappingURL=BufferUtil.d.ts.map
